@@ -1,11 +1,14 @@
 module Main where
 
+import Data.List (sortBy)
 import Util.File (readLines)
 
 main :: IO ()
 main = do
   cals <- readLines "data/day1/day1.txt"
-  print $ maximum $ sum . fmap read <$> splitOn "" cals
+  let calories = sum . fmap read <$> splitOn "" cals
+  print $ maximum calories
+  print $ sum . take 3 $ sortBy (flip compare) calories
 
 splitOn :: Eq a => a -> [a] -> [[a]]
 splitOn _ [] = []
