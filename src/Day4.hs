@@ -2,7 +2,6 @@
 
 module Main where
 
-import Data.List (intersect)
 import qualified Data.Text as T
 import qualified Data.Text.Read as TR
 import Text.Parsec
@@ -17,8 +16,8 @@ main = do
   case parse parser "day4" (T.pack input) of
       Left err -> print err
       Right x -> do
-          print $ length $ filter (==True) $ fmap (shitCheck contains) $ fmap range <$> x
-          print $ length $ filter (==True) $ fmap (shitCheck overlaps) $ fmap range <$> x
+          print $ length $ filter (==True) $ shitCheck contains <$> x
+          print $ length $ filter (==True) $ shitCheck overlaps <$> x
   where
       parser = many1 parseLine
 
@@ -44,18 +43,11 @@ parseLine = do
   optional newline
   return [r1,r2]
 
-range :: Range -> [Int]
-range (x,y) = [x..y]
+contains :: Range -> Range -> Bool
+contains (x,y) (x',y') = (x >= x' && y <= y') || (x' >= x && y' <= y)
 
-contains :: Eq a => [a] -> [a] -> Bool
-contains xs ys = let
-    xLen = length xs
-    yLen = length ys
-    intersectionLen = length $ xs `intersect` ys
-   in  intersectionLen == xLen || intersectionLen == yLen
+overlaps :: Range -> Range -> Bool
+overlaps (x,y) (x',y') = not (y' < x || x' > y)
 
-overlaps :: Eq a => [a] -> [a] -> Bool
-overlaps xs ys = not $ null (xs `intersect` ys)
-
-shitCheck :: Eq a => ([a] -> [a] -> Bool) -> [[a]] -> Bool
+shitCheck :: (Range -> Range -> Bool) -> [Range] -> Bool
 shitCheck f (xs:ys:_) = f xs ys
