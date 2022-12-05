@@ -58,13 +58,13 @@ toStacksMap cs = fmap toDeque $ M.fromList $ zip [1..] cs
     toDeque (x:xs) = cons x (toDeque xs)
 
 applyCommand :: (Int -> Deque Crate -> Maybe ([Crate], Deque Crate)) -> Stacks -> Command -> Stacks
-applyCommand unconz stacks (Cmd num from to) = execState (do
+applyCommand unconz stacks (Cmd num from to) = flip execState stacks $ do
   dqFrom <- gets (M.! from) 
   dqTo <- gets (M.! to) 
   let (elems, dqFrom') = fromJust $ unconz num dqFrom
       dqTo' = consN elems dqTo
   modify (M.insert from dqFrom') 
-  modify (M.insert to dqTo')) stacks
+  modify (M.insert to dqTo')
 
 unconsN :: Int -> Deque a -> Maybe ([a], Deque a)
 unconsN 0 d = Nothing
