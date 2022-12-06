@@ -10,8 +10,9 @@ main = do
   print $ day6 14 <$> lines
 
 day6 :: Int -> String -> Int
-day6 o = go 1
+day6 o = go 0
   where
     go n xs
-      | (==o) . length . nub $ take o xs = n+o-1
+      | (==o) . length . nub $ take o xs = n+o
       | otherwise = go (n+1) (tail xs)
+
