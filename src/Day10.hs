@@ -3,7 +3,6 @@
 
 module Main where
 
-import qualified Control.Monad.Trans.State.Strict as S
 import Data.List (notElem)
 import Data.Maybe (fromJust)
 import Data.Text (Text)
@@ -22,7 +21,6 @@ main = do
       Left err -> print err
       Right v -> do
         let cycles = fun (Reg 1) v
-        print cycles
         print $ sum $ fmap fromJust $ flip lookup (ss <$> cycles) <$> [20,60,100,140,180,220] 
         putStrLn . Main.crlf $ snd <$> draw cycles screen
   where
