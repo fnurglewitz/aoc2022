@@ -4,7 +4,7 @@
 module Main where
 
 import qualified Control.Monad.Trans.State.Strict as S
-import Data.List (intersect)
+import Data.List (notElem)
 import Data.Maybe (fromJust)
 import Data.Text (Text)
 import qualified Data.Text as T
@@ -22,6 +22,7 @@ main = do
       Left err -> print err
       Right v -> do
         let cycles = fun (Reg 1) v
+        print cycles
         print $ sum $ fmap fromJust $ flip lookup (ss <$> cycles) <$> [20,60,100,140,180,220] 
         putStrLn . Main.crlf $ snd <$> draw cycles screen
   where
@@ -37,7 +38,7 @@ draw ((c,(r,_)):rs) (s:ss) = updatePixel c r s : draw rs ss
 
 updatePixel :: Int -> Reg -> (Int,Char) -> (Int,Char)
 updatePixel c (Reg r) p@(ix, chr) 
-  | null $ [c `mod` 40] `intersect` [r..r+2] = p
+  | ((c-1) `mod` 40) `notElem` [r-1..r+1] = p
   | otherwise = (ix, '#')
 
 crlf :: String -> String
